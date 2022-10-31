@@ -69,7 +69,7 @@ def find_station(df, lat, lon):
     with colm1:
         select_label = 'Select a station'
         options = [select_label, *list(range(len(stations)))]
-        format_func = lambda x: stations.loc[x, 'stname'] if x != select_label else select_label
+        format_func = lambda x: f'{x} - ' + stations.loc[x, 'stname'] if x != select_label else select_label
         selected = st.selectbox(
             label='station', 
             label_visibility='collapsed',
