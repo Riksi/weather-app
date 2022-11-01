@@ -144,6 +144,7 @@ def plot_weather_data(usaf, wban, yy):
         st.warning(f'No data found for {yy}')
         os.remove(data_inpt)
     else:    
+        return
         yearday = np.double(n)
         yearhour = np.double(n)
         yearmmddtime = np.double(n)
@@ -362,10 +363,9 @@ def main():
             
             if yy != 'Year':
                 with st.spinner():
-                    st.write('Plots for ' + str(yy))
-                    # plot_weather_data(
-                    #     usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
-                    # )
+                    plot_weather_data(
+                        usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
+                    )
                 
         
 
