@@ -204,96 +204,96 @@ def plot_weather_data(usaf, wban, yy):
         st.subheader('Humidity')
         st.plotly_chart(plot_humid(yearday, rh))
         
-        # st.subheader("Water evaporation")
-        # colm, _ = st.columns([1, 1])
-        # with colm:
-        #     n_orient_options = list(range(4, 362, 2))
-        #     n_orient_input = st.selectbox(
-        #         label="No. points for annual water evaporation plot",
-        #         options=n_orient_options,
-        #         index=n_orient_options.index(18)
-        #     )
-        # st.plotly_chart(plot_water_evap3(
-        #     n_orient_input, n, delta_ah_wbt, wspd, wdir, yearhour
-        # ))
-        # kaku = st.slider(
-        #     "Choose an orientation angle (°N)", 
-        #     min_value=0, max_value=360,
-        #     value=20, step=5
-        # )
+        st.subheader("Water evaporation")
+        colm, _ = st.columns([1, 1])
+        with colm:
+            n_orient_options = list(range(4, 362, 2))
+            n_orient_input = st.selectbox(
+                label="No. points for annual water evaporation plot",
+                options=n_orient_options,
+                index=n_orient_options.index(18)
+            )
+        st.plotly_chart(plot_water_evap3(
+            n_orient_input, n, delta_ah_wbt, wspd, wdir, yearhour
+        ))
+        kaku = st.slider(
+            "Choose an orientation angle (°N)", 
+            min_value=0, max_value=360,
+            value=20, step=5
+        )
 
-        # st.plotly_chart(
-        #     plot_water_evap2(kaku, yearday, rh, n, delta_ah_wbt, wspd, wdir, yearhour)
-        # )
+        st.plotly_chart(
+            plot_water_evap2(kaku, yearday, rh, n, delta_ah_wbt, wspd, wdir, yearhour)
+        )
 
-        # st.plotly_chart(
-        #     plot_water_evap1(kaku, yearday, rh, n, delta_ah_wbt, wspd, wdir, yearhour)
-        # )
+        st.plotly_chart(
+            plot_water_evap1(kaku, yearday, rh, n, delta_ah_wbt, wspd, wdir, yearhour)
+        )
 
-        # st.subheader("Wind")
-        # st.plotly_chart(plot_wind1(wspd, wdir))
-        # st.plotly_chart(plot_wind2(yearday, wspd))
-        # st.plotly_chart(plot_wind3(yearday, wdir))
+        st.subheader("Wind")
+        st.plotly_chart(plot_wind1(wspd, wdir))
+        st.plotly_chart(plot_wind2(yearday, wspd))
+        st.plotly_chart(plot_wind3(yearday, wdir))
 
-        # st.subheader("Wind rose")
-
-
-        # windrose_df = pd.DataFrame(dict(wspd=wspd, wdir=wdir, mm=mm))
-        # windrose_df = windrose_df[(windrose_df.wdir <= 360) & (windrose_df.wdir > 0)].reset_index(drop=True)
-        # windrose_df['wdir'] = windrose_df.wdir % 360
-        # wr_wspd = windrose_df.wspd.values
-        # wr_wdir = windrose_df.wdir.values
-        # freq_kwargs = dict(wspd=wr_wspd, wdir=wr_wdir)
+        st.subheader("Wind rose")
 
 
-        # colm1, colm2, colm3 = st.columns(3)
+        windrose_df = pd.DataFrame(dict(wspd=wspd, wdir=wdir, mm=mm))
+        windrose_df = windrose_df[(windrose_df.wdir <= 360) & (windrose_df.wdir > 0)].reset_index(drop=True)
+        windrose_df['wdir'] = windrose_df.wdir % 360
+        wr_wspd = windrose_df.wspd.values
+        wr_wdir = windrose_df.wdir.values
+        freq_kwargs = dict(wspd=wr_wspd, wdir=wr_wdir)
 
-        # with colm1:
-        #     month = st.selectbox(
-        #         label='Month', 
-        #         options=[0] + sorted(windrose_df.mm.unique()),
-        #         format_func=lambda x: 'All' if x == 0 else calendar.month_name[x],
-        #         index=0
-        #     )
 
-        # with colm2:
-        #     max_speed = st.selectbox(
-        #         label='Max wind speed (m/s)', 
-        #         options=list(range(2, 33)), 
-        #         index=2
-        #     )
-        # with colm3:
-        #     num_partitions = st.selectbox(label='No. partitions', options=list(range(2, 33)), index=2)
+        colm1, colm2, colm3 = st.columns(3)
+
+        with colm1:
+            month = st.selectbox(
+                label='Month', 
+                options=[0] + sorted(windrose_df.mm.unique()),
+                format_func=lambda x: 'All' if x == 0 else calendar.month_name[x],
+                index=0
+            )
+
+        with colm2:
+            max_speed = st.selectbox(
+                label='Max wind speed (m/s)', 
+                options=list(range(2, 33)), 
+                index=2
+            )
+        with colm3:
+            num_partitions = st.selectbox(label='No. partitions', options=list(range(2, 33)), index=2)
 
         
 
 
-        # if month == 0:
-        #     wr_kwargs = freq_kwargs
+        if month == 0:
+            wr_kwargs = freq_kwargs
 
-        # else:
-        #     mask = windrose_df.mm == month
-        #     wr_wspd_month = windrose_df.wspd[mask].values
-        #     wr_wdir_month = windrose_df.wdir[mask].values
-        #     wr_kwargs = dict(wspd=wr_wspd_month, wdir=wr_wdir_month)
+        else:
+            mask = windrose_df.mm == month
+            wr_wspd_month = windrose_df.wspd[mask].values
+            wr_wdir_month = windrose_df.wdir[mask].values
+            wr_kwargs = dict(wspd=wr_wspd_month, wdir=wr_wdir_month)
 
 
-        # wr_kwargs = dict(
-        #     wr_kwargs,
-        #     max_speed=max_speed, num_partitions=num_partitions,
-        #     month=month
-        # )
+        wr_kwargs = dict(
+            wr_kwargs,
+            max_speed=max_speed, num_partitions=num_partitions,
+            month=month
+        )
 
-        # st.plotly_chart(plot_line_windrose(**wr_kwargs), use_container_width=True)
+        st.plotly_chart(plot_line_windrose(**wr_kwargs), use_container_width=True)
 
-        # st.plotly_chart(plot_bar_windrose(**wr_kwargs), use_container_width=True)
+        st.plotly_chart(plot_bar_windrose(**wr_kwargs), use_container_width=True)
    
-        # _, colm, _ = st.columns([1, 5, 1])
-        # with colm:
-        #     st.pyplot(plot_wind_polar_frequency(**freq_kwargs))
-        # _, colm, _ = st.columns([1, 5, 1])
-        # with colm:
-        #     st.pyplot(plot_hexbin(**freq_kwargs))
+        _, colm, _ = st.columns([1, 5, 1])
+        with colm:
+            st.pyplot(plot_wind_polar_frequency(**freq_kwargs))
+        _, colm, _ = st.columns([1, 5, 1])
+        with colm:
+            st.pyplot(plot_hexbin(**freq_kwargs))
             
 @st.cache
 def load_df():
