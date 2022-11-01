@@ -87,7 +87,6 @@ def plot_wind_polar_frequency(wspd, wdir, subdivs = 10):
     cb = fig.colorbar(pc, ax=axis, fraction=0.03, pad=0.2)
     cb.ax.tick_params(labelsize=8)
 
-    # set all text to size 10 except for the title which is size 12
     for i in axis.get_xticklabels() + axis.get_yticklabels():
         i.set_fontsize(8)
     
@@ -108,7 +107,7 @@ def plot_hexbin(wspd, wdir, gridsize=25):
     axis.set_title('Hexagonal bin histogram of windspeed and direction', fontsize=12); 
     cb = fig.colorbar(hb)
     cb.ax.tick_params(labelsize=8)
-    # set all text to size 10 except for the title which is size 12
+    
     for i in axis.get_xticklabels() + axis.get_yticklabels():
         i.set_fontsize(8)
     
@@ -159,7 +158,7 @@ def plot_line_windrose(wspd, wdir, num_partitions=4, max_speed=4, month=None):
                     )
 
     fig.update_polars(
-        radialaxis_angle = -37.5,
+        radialaxis_angle = -45,
         radialaxis_tickangle=-45,
         radialaxis_tickformat=',.0%',
         radialaxis_tickfont_color='white',
@@ -182,7 +181,7 @@ def plot_bar_windrose(wspd, wdir, num_partitions=4, max_speed=4, month=None):
 
 
     fig.update_polars(
-        radialaxis_angle = -37.5,
+        radialaxis_angle = -45,
         radialaxis_tickangle=-45,
         radialaxis_tickformat=',.0%',
         radialaxis_tickfont_color='white',
