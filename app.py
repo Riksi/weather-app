@@ -125,7 +125,10 @@ def select_weather_station(df):
 def plot_weather_data(usaf, wban, yy):
     sd = yy * 10000 + 101
     ed = yy * 10000 + 1231
-    data_inpt = f'/data/data-{usaf}-{wban}-{yy}.csv'
+    data_folder = 'data'
+    if not os.path.exists(data_folder):
+        os.mkdir(data_folder)
+    data_inpt = f'{data_folder}/data-{usaf}-{wban}-{yy}.csv'
     if not os.path.exists(data_inpt):
         print('Saving data to', data_inpt)
         stid = '%06i-%05i'%(usaf, wban)
@@ -342,26 +345,26 @@ def main():
             if ws_data is not None:
                 "Currently selected:", ws_data['stname'],'| USAF:', ws_data['usaf'], '| WBAN:', ws_data['wban']
                     
-    with tab2:
-        if ws_data is None:
-            st.warning("Please select a weather station first")
+    # with tab2:
+    #     if ws_data is None:
+    #         st.warning("Please select a weather station first")
 
-        else:
-            (ws_data['stname'],
-            "| USAF: ", ws_data['usaf'], 
-            "| WBAN: ", ws_data['wban'],
-            "| Lat: ", ws_data['lat'],
-            "| Lon: ", ws_data['lon'])
+    #     else:
+    #         (ws_data['stname'],
+    #         "| USAF: ", ws_data['usaf'], 
+    #         "| WBAN: ", ws_data['wban'],
+    #         "| Lat: ", ws_data['lat'],
+    #         "| Lon: ", ws_data['lon'])
             
-            yy_colm, *_ = st.columns([1, 3])
-            with yy_colm:
-                yy = year_input(ws_data)
+    #         yy_colm, *_ = st.columns([1, 3])
+    #         with yy_colm:
+    #             yy = year_input(ws_data)
             
-            if yy != 'Year':
-                with st.spinner():
-                    plot_weather_data(
-                        usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
-                    )
+    #         if yy != 'Year':
+    #             with st.spinner():
+    #                 plot_weather_data(
+    #                     usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
+    #                 )
                 
         
 
