@@ -345,26 +345,27 @@ def main():
             if ws_data is not None:
                 "Currently selected:", ws_data['stname'],'| USAF:', ws_data['usaf'], '| WBAN:', ws_data['wban']
                     
-    # with tab2:
-    #     if ws_data is None:
-    #         st.warning("Please select a weather station first")
+    with tab2:
+        if ws_data is None:
+            st.warning("Please select a weather station first")
 
-    #     else:
-    #         (ws_data['stname'],
-    #         "| USAF: ", ws_data['usaf'], 
-    #         "| WBAN: ", ws_data['wban'],
-    #         "| Lat: ", ws_data['lat'],
-    #         "| Lon: ", ws_data['lon'])
+        else:
+            (ws_data['stname'],
+            "| USAF: ", ws_data['usaf'], 
+            "| WBAN: ", ws_data['wban'],
+            "| Lat: ", ws_data['lat'],
+            "| Lon: ", ws_data['lon'])
             
-    #         yy_colm, *_ = st.columns([1, 3])
-    #         with yy_colm:
-    #             yy = year_input(ws_data)
+            yy_colm, *_ = st.columns([1, 3])
+            with yy_colm:
+                yy = year_input(ws_data)
             
-    #         if yy != 'Year':
-    #             with st.spinner():
-    #                 plot_weather_data(
-    #                     usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
-    #                 )
+            if yy != 'Year':
+                with st.spinner():
+                    st.write('Plots for ' + str(yy))
+                    # plot_weather_data(
+                    #     usaf=ws_data.usaf, wban=ws_data.wban, yy=yy
+                    # )
                 
         
 
