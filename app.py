@@ -9,6 +9,8 @@ import os
 import streamlit as st
 from streamlit_folium import st_folium
 import folium
+import warnings
+warnings.filterwarnings('ignore')
 
 def day_of_year(yy, mm, dd):
     """
