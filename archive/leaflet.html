@@ -1,0 +1,144 @@
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+    crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+ integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+ crossorigin=""></script>
+ <style>
+    #map { 
+        height: 500px; 
+        width: 500px
+    }
+    #clear{
+        display: none;
+    }
+ </style>
+ <script>
+
+
+let LOCATIONS = [
+    [48.0830, 5.6670],
+    [48.1, 5.65],
+    [47.85, 5.333],
+    [48.325, 6.07],
+    [48.1, 5.05],
+    [48.583, 5.955],
+    [47.783, 6.364],
+    [48.75, 5.4],
+    [47.25, 5.983],
+    [48.2, 6.433]
+ ]
+    window.onload = function(){
+        var lat = document.getElementById("lat");
+        var lon = document.getElementById("lon");
+        var near = document.getElementById("near");
+        var clear = document.getElementById("clear");
+        var ws = document.getElementById("ws");
+
+        function getLatLng(){
+            var latval = parseFloat(lat.value);
+            var lonval = parseFloat(lon.value);
+
+            if (!(isNaN(latval) || isNaN(lonval))){
+                return [latval, lonval];
+            }
+            else{
+                return null
+            }
+        }
+
+        
+        var latLng = getLatLng();
+        if (latLng === null){
+            latLng = [47.989921667414194, 5.625]
+        }
+
+
+        var map = L.map('map').setView(latLng, 13);
+         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        var marker = L.marker(latLng).addTo(map);
+
+        var neighbours = [];
+
+        function clearNear(){
+            neighbours.forEach(function(n){
+                map.removeLayer(n);
+            });
+            neighbours = [];
+            clear.style.display = "none";
+        }
+
+        function showNear(){
+            clearNear();
+            clear.style.display = "inline-block";
+            // Get locations from Streamlit
+            LOCATIONS.forEach(
+                (l)=>{
+                    var circle = L.circleMarker(l).addTo(map);
+                    circle.on(
+                        'click',
+                        (e)=>{
+                            {
+                                console.log(circle.getLatLng());
+                                ws.innerHTML = circle.getLatLng().lat + ", " + circle.getLatLng().lng;
+                                L.DomEvent.stopPropagation(e);
+                            }
+                        }
+                    )
+                    neighbours.push(circle);
+                }
+            )
+            map.fitBounds(neighbours.map(function(n){return n.getLatLng()}));
+        }
+
+        function changeMarker() {
+            var latLng = getLatLng();
+
+            if (latLng !== null){
+                marker.setLatLng(latLng);
+                map.panTo(latLng);
+            }
+        }
+
+        lat.onchange = changeMarker;
+        lon.onchange = changeMarker;
+        near.onclick = showNear;
+        clear.onclick = clearNear;
+        
+
+        map.on('click', function(e) {
+            {
+                var latval = e.latlng.lat;
+                var lonval = e.latlng.lng;
+                marker.setLatLng([latval, lonval]);
+                lat.value = latval;
+                lon.value = lonval;
+            }
+        })
+        
+    }
+        
+
+        
+
+ </script>
+
+</head>
+<body>
+<p>
+    Selected weather station: <span id="ws">None</span>
+</p>
+<p>
+    <input type="text" id="lat" value="47.989921667414194">
+    <input type="text" id="lon" value="5.625">
+    <input type="button" value="Show near" id="near">
+    <input type="button" value="Clear" id="clear">
+</p>
+    <div id="map"></div>
+
+</body>

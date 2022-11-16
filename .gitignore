@@ -1,2 +1,4 @@
 __pycache__
 data
+package-lock.json
+node_modules
