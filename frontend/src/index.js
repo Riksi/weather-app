@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Streamlit, RenderData } from "streamlit-component-lib"
+import { Streamlit } from "streamlit-component-lib"
     
     window.onload = function(){
         // Input elements
@@ -90,7 +90,7 @@ import { Streamlit, RenderData } from "streamlit-component-lib"
             clearNear();
 
             var latLng = marker.getLatLng()
-            console.log('Showing near', latLng.lat, latLng.lng)
+            // console.log('Showing near', latLng.lat, latLng.lng)
             
 
             neighboursOf = {"lat": latLng.lat, "lon": latLng.lng};
@@ -120,7 +120,7 @@ import { Streamlit, RenderData } from "streamlit-component-lib"
                         (e)=>{
                             L.DomEvent.stopPropagation(e);
                             
-                            console.log('circle', latLng.lat, latLng.lng)
+                            // console.log('circle', latLng.lat, latLng.lng)
                             var circlelatLng = circle.getLatLng();
                             changeMapState([circlelatLng.lat, circlelatLng.lng])
 
@@ -205,7 +205,7 @@ import { Streamlit, RenderData } from "streamlit-component-lib"
 
             latInput.value = latval;
             lonInput.value = lonval;
-            console.log('click', latval, lonval);
+            // console.log('click', latval, lonval);
 
             changeMapState([latval, lonval]);
             sendData();
@@ -278,7 +278,7 @@ import { Streamlit, RenderData } from "streamlit-component-lib"
                 var lon = data.args['lon'];
                 initialise(lat, lon);
                 init = false;
-                console.log('RENDER_EVENT:', lat, lon);
+                // console.log('RENDER_EVENT:', lat, lon);
             }
             else{
                 var eps = 1e-6;
@@ -287,9 +287,9 @@ import { Streamlit, RenderData } from "streamlit-component-lib"
                 if (Math.abs(latval - data.args['lat']) > eps || Math.abs(lonval - data.args['lon']) > eps){
                     console.warn('WARNING: lat and lon are not the same as the ones in the event', latval, lonval, data.args['lat'], data.args['lon']);
                 }
-                else{
-                    console.log('RENDER_EVENT: lat and lon are the same as the ones in the event');
-                }
+                // else{
+                //     console.log('RENDER_EVENT: lat and lon are the same as the ones in the event');
+                // }
             }
             Streamlit.setFrameHeight(1000);
         })
