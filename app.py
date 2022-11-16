@@ -1,17 +1,18 @@
+import warnings
+
 import numpy as np
 import streamlit.components.v1 as components
-import os
+
 from funcs import get_stations_nearby
-import warnings
-import time
+
 warnings.filterwarnings('ignore')
-from data_utils import load_df
-from plot_weather import plot_weather_data
-from map_select import map_select
 import streamlit as st
 
-
 from component_callbacks import register_callback
+from data_utils import load_df
+from map_select import map_select
+from plot_weather import plot_weather_data
+
 
 def map_callback():
     data = st.session_state.map
