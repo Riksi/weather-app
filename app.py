@@ -20,58 +20,83 @@ def map_callback():
         if data.get('marker') is not None:
             st.session_state['latLng'] = data['marker'] 
         if data.get('ws') is not None:
-            usaf_str = str(data['ws']['usaf'])
-            wban_str = str(data['ws']['wban'])
-            st.session_state['usaf'] = usaf_str
-            st.session_state['wban'] = wban_str
+            st.session_state['usaf'] = data['ws']['usaf']
+            st.session_state['wban'] = data['ws']['wban']
+            
 
 if __name__ == '__main__':
     register_callback("map", map_callback)
-    selected_station = st.sidebar.empty()
-    with selected_station.container():
-        st.subheader("No station selected")
+    
 
-    tab1, tab2 = st.tabs(["Choose weather station", "Plot"])
-        
+    sidebar_subheader = st.sidebar.empty()
+    sidebar_usaf_wban = st.sidebar.container()
+    sidebar_extra = st.sidebar.container()
+    
+    sidebar_expander = st.sidebar.expander("Instructions", expanded=True)
+
+    with sidebar_expander:
+        st.markdown("If you know then USAF and WBAN, input these values, then click  <br> <span style='padding: 5px; border-radius: 3px; border: 1px solid rgba(49, 51, 63, 0.2); background: #F9F9FB'>Find stations details</span><br> to fetch additional data and view the station on the map", unsafe_allow_html=True)
+        "* Alternatively select a station in the 'Choose from map' tab, and the USAF and WBAN will be filled in"
+        "* Select a year to plot in the dropdown that appears after selecting a station"
+        "* Then go to the 'Plot' tab to view the plots"
+
+    sidebar_subheader.subheader("No station selected")
+
+    tab1, tab2 = st.tabs(["Choose from map", "Plot"])
 
     df = load_df()
-    year_msg = 'Please select a year'
+    year_msg = 'Year'
 
-    with tab1:
-        usaf_colm, wban_colm = st.columns(2)
+    def should_update():
+        st.session_state[f'update_usaf_wban'] = True
+        
+    # update_usaf, update_wban = False, False
+    # if st.session_state.get('usaf_updated', False):
+    #     update_usaf = True
+    #     st.session_state['usaf_updated'] = False
 
+    # if st.session_state.get('wban_updated', False):
+    #     update_wban = True
+    #     st.session_state['wban_updated'] = False
+
+    update_usaf_wban = False
+    if st.session_state.get('update_usaf_wban', False):
+        update_usaf_wban = True
+        st.session_state['update_usaf_wban'] = False
+
+    with sidebar_usaf_wban:
         usaf, wban = None, None
 
-        with usaf_colm:
-            input_usaf = st.text_input(label='USAF (optional)', value='', key='usaf').strip()
-        if len(input_usaf) and not input_usaf.isnumeric():
-            st.error('USAF must be a number')
-        elif len(input_usaf):
-            usaf = int(input_usaf)
+        
+        with st.form('form'):
+            
+            usaf = st.number_input(label='USAF', step=1,
+                key='usaf',
+                #on_change=should_update, args=('usaf',)
+                )
+    
+            wban = st.number_input(label='WBAN', key='wban',
+                step=1,
+                # on_change=should_update, args=('wban',)
+                )
+            btn = st.form_submit_button(label='Find station details', on_click=should_update)
 
-        with wban_colm:    
-            input_wban = st.text_input(label='WBAN (optional)', value='', key='wban').strip()
-        if len(input_wban) and not input_wban.isnumeric():
-            st.error('WBAN must be a number')
-        elif len(input_wban):
-            wban = int(input_wban)
+    
+    ws_data = None
 
-        ws_data = None
-
-
-    if usaf is not None and wban is not None:
+    if not ((usaf == 0) and (wban == 0)):
+        # if usaf is not None and wban is not None:
         df_ws = df[(df['usaf'] == usaf) & (df['wban'] == wban)]
+
         if len(df_ws):
             ws_data = df_ws.squeeze()
             lat = ws_data['lat']
             lon = ws_data['lon']
-            selected_station.empty()
-            with selected_station.container():
-                st.subheader(f'{ws_data["stname"]}, {ws_data["country"]}')
-                for key in ['USAF', 'WBAN', 'Lat', 'Lon']:
+            sidebar_subheader.subheader(f'{ws_data["stname"]}, {ws_data["country"]}')
+            with sidebar_extra:
+                for key in ['Lat', 'Lon']:
                     f"{key}: `{ws_data[key.lower()]}`"
 
-                st.write('Year:')
                 yy = st.selectbox(label='Year', 
                                 key='year',
                                 label_visibility='collapsed',
@@ -81,13 +106,18 @@ if __name__ == '__main__':
             
                 
         else:
-            st.error('No weather station found with the given USAF and WBAN')
+            with sidebar_usaf_wban:
+                st.error('No weather station found with the given USAF and WBAN')
 
-    if ws_data is None:
+
+
+    update_lat_lon = ws_data is not None and update_usaf_wban
+
+    if not update_lat_lon:
         # Salton Sea
         lat, lon = [33.3162, -115.8069]
 
-    if 'latLng' not in st.session_state:
+    if ('latLng' not in st.session_state) or update_lat_lon:
         st.session_state['latLng'] = {
             'lat': lat,
             'lon': lon
@@ -102,15 +132,15 @@ if __name__ == '__main__':
     stations = [i.to_dict() for idx, i in nearby.iterrows()]
 
     with tab1:
-        st.markdown('**To choose a weather station from the map**')
-        st.markdown('* Click on a location on the map to move the marker, or manually enter the latitude and longitude')
-        st.markdown('* Click <span style="padding: 5px; border-radius: 2px; background-color:rgb(0, 123, 255); color: white">Find stations nearby</span>'
-        + ' to display the 10 closest stations',
-        unsafe_allow_html=True)
-        st.markdown('* Click on a station to select it')
+        with st.expander('How to select a weather station from the map', expanded=True):
+            st.markdown('* Click on a location on the map to move the marker, or manually enter the latitude and longitude')
+            st.markdown('* Click <span style="padding: 5px; border-radius: 2px; background-color:rgb(0, 123, 255); color: white">Find stations nearby</span>'
+            + ' to display the 10 closest stations',
+            unsafe_allow_html=True)
+            st.markdown('* Click on a station to select it')
 
     with tab1:
-        data = map_select(lat, lon, data=stations, key="map")
+        data = map_select(lat, lon, data=stations, update=update_lat_lon, key="map")
     
     if isinstance(data, dict) and (data.get('ws') is not None):
 
@@ -134,10 +164,15 @@ if __name__ == '__main__':
             st.stop()
     
     with tab2:
+       
         if ws_data is None:
-            st.error('Please select a weather station')
+            plot_err_msg = ('Please select a weather station')
         elif yy == year_msg:
-            st.error('Please select a year for plotting')
+            plot_err_msg = ('Please select a year for plotting')
         else:
+            st.markdown(f'<div style="font-size:10px; color: gray; text-align: right">{ws_data.usaf}-{ws_data.wban}/{yy}</div>', unsafe_allow_html=True)
             with st.spinner():
-                plot_weather_data(usaf=ws_data.usaf, wban=ws_data.wban, yy=yy)
+                plot_err_msg = plot_weather_data(usaf=ws_data.usaf, wban=ws_data.wban, yy=yy)
+
+        if plot_err_msg is not None:
+            st.error(plot_err_msg)

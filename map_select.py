@@ -45,7 +45,7 @@ else:
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def map_select(lat, lon, data=None, key=None):
+def map_select(lat, lon, data=None, update=False, key=None):
     """Create a new instance of "my_component".
 
     Parameters
@@ -73,7 +73,7 @@ def map_select(lat, lon, data=None, key=None):
     #
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    component_value = _component_func(lat=lat, lon=lon, data=data, key=key)
+    component_value = _component_func(lat=lat, lon=lon, data=data, update=update, key=key)
     
 
     # We could modify the value returned from the component if we wanted.

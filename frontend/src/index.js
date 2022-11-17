@@ -273,23 +273,30 @@ import { Streamlit } from "streamlit-component-lib"
             
             // if init update lat and lon
             // otherwise assert difference is small
-            if(init){
+            if (init || data.args['update']){
                 var lat = data.args['lat'];
                 var lon = data.args['lon'];
-                initialise(lat, lon);
-                init = false;
-                // console.log('RENDER_EVENT:', lat, lon);
-            }
-            else{
+                if(init){
+                    initialise(lat, lon);
+                    init = false;
+                    // console.log('RENDER_EVENT:', lat, lon);
+                }
+                else {
+                    changeMapState([lat, lon]);
+                    latInput.value = lat;
+                    lonInput.value = lon;
+                    clearNear();
+                }
+            } else{
                 var eps = 1e-6;
                 var latval = parseFloat(latInput.value);
                 var lonval = parseFloat(lonInput.value);
                 if (Math.abs(latval - data.args['lat']) > eps || Math.abs(lonval - data.args['lon']) > eps){
                     console.warn('WARNING: lat and lon are not the same as the ones in the event', latval, lonval, data.args['lat'], data.args['lon']);
                 }
-                // else{
-                //     console.log('RENDER_EVENT: lat and lon are the same as the ones in the event');
-                // }
+                else{
+                    console.log('RENDER_EVENT: lat and lon are the same as the ones in the event');
+                }
             }
             Streamlit.setFrameHeight(1000);
         })

@@ -40,8 +40,8 @@ def plot_weather_data(usaf, wban, yy):
     n = forg.shape[0]
 
     if n <= 1:
-        st.warning(f'No data found for {yy}')
         os.remove(data_inpt)
+        return f'No data found for {yy}'
     else:    
         yearday = np.double(n)
         yearhour = np.double(n)
