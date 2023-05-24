@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-@st.cache
+@st.cache_data
 def load_df():
     df_file = 'isd-history_only_available.txt'
     df = pd.read_csv(df_file, header=None, names=['text'])
