@@ -166,9 +166,9 @@ if __name__ == '__main__':
     with tab2:
        
         if ws_data is None:
-            plot_err_msg = ('Please select a weather station')
+            plot_err_msg = ('Please select a weather station from the left')
         elif yy == year_msg:
-            plot_err_msg = ('Please select a year for plotting')
+            plot_err_msg = ('Please select a year for plotting from the left')
         else:
             st.markdown(f'<div style="font-size:10px; color: gray; text-align: right">{ws_data.usaf}-{ws_data.wban}/{yy}</div>', unsafe_allow_html=True)
             with st.spinner():
