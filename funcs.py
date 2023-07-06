@@ -19,6 +19,7 @@ def wet_bulb_temp(temp, rh):
 # ah <- 18./gas_constant*e/(t+zero_degC); # water vapor @ wbt [g/m3]
 # return ( ah )
 # }
+
 def abs_humid(t, e):
     zero_degC = 273.15
     gas_constant = 8.3144598
