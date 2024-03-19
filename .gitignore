@@ -1,4 +1,6 @@
 __pycache__
+.DS_STORE
 data
 package-lock.json
 node_modules
+notebooks

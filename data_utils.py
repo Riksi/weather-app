@@ -3,6 +3,42 @@ import pandas as pd
 
 @st.cache_data
 def load_df():
+    df_file = 'isd-history.csv'
+    df = pd.read_csv(df_file)
+
+    columns_to_use = ['USAF', 'WBAN', 'STATION NAME', 'CTRY', 'ICAO', 'LAT', 'LON',
+       'ELEV(M)', 'BEGIN', 'END']
+    column_names = ['usaf', 'wban', 'stname', 'country', 'label', 'lat', 'lon', 'ele',
+       'start', 'end']
+    
+    df = df[columns_to_use]
+
+    df.columns = column_names
+
+    # Omit lat/lon with missing values
+    df = df[(df['lat'].notna()) & (df['lon'].notna())].reset_index(drop=True)
+
+    df = df.fillna(
+        value={
+            'usaf': '', 'wban': 0, 'stname': '', 'country': '', 'label': '', 'lat': 0, 'lon': 0, 'ele': 0, 'start': '', 'end': ''
+        }
+    )
+
+    df['start'] = pd.to_datetime(df['start'], format='%Y%m%d').astype('str')
+    df['end'] = pd.to_datetime(df['end'], format='%Y%m%d').astype('str')
+
+
+    df = df.astype(
+        {'lat': float, 'lon': float, 'start': 'datetime64', 'end': 'datetime64',
+         'usaf': str, 'wban': int}
+    )
+
+
+    return df
+
+
+@st.cache_data
+def load_df_archive():
     df_file = 'isd-history_only_available.txt'
     df = pd.read_csv(df_file, header=None, names=['text'])
     df.fillna(

@@ -70,7 +70,12 @@ if __name__ == '__main__':
         
         with st.form('form'):
             
-            usaf = st.number_input(label='USAF', step=1,
+            # usaf = st.number_input(label='USAF', step=1,
+            #     key='usaf',
+            #     #on_change=should_update, args=('usaf',)
+            #     )
+
+            usaf = st.text_input(label='USAF',
                 key='usaf',
                 #on_change=should_update, args=('usaf',)
                 )
@@ -84,7 +89,8 @@ if __name__ == '__main__':
     
     ws_data = None
 
-    if not ((usaf == 0) and (wban == 0)):
+    # if not ((usaf == 0) and (wban == 0)):
+    if not ((usaf == '') and (wban == 0)):
         # if usaf is not None and wban is not None:
         df_ws = df[(df['usaf'] == usaf) & (df['wban'] == wban)]
 
